@@ -33,5 +33,10 @@ batch. It is defined in the package org.springframework.data.jpa.repository. Jpa
 # To view your H2 in-memory datbase
 The 'test' profile runs on H2 in-memory database. To view and query the database you
  can browse to http://localhost:2021/h2-console. Default username is 'sa' with a password 'kamara'.
+ 
+ ## Entry point for h2
+![entry point for h2](https://user-images.githubusercontent.com/77746680/169733905-a1f95baf-5ab7-42d5-b56b-a940aeb9f871.png)
 
+## select record from h2
 
+![select record from the h2 database](https://user-images.githubusercontent.com/77746680/169734048-ef89fc96-d2fd-4c17-b10b-a89f71106a58.png)
