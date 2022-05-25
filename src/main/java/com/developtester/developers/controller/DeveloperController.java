@@ -2,74 +2,56 @@ package com.developtester.developers.controller;
 
 import com.developtester.developers.domain.Developer;
 import com.developtester.developers.service.DeveloperService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/developer")
-@CrossOrigin(origins = "http://localhost:4200")
+@AllArgsConstructor
 public class DeveloperController {
 
-    @Autowired
     private DeveloperService developerService;
 
-
-    // save developer
-    @RequestMapping(value = "save", method = RequestMethod.POST)
-    public ResponseEntity<?> saveDeveloper(@RequestBody Developer developer) {
-        return developerService.saveDeveloper(developer);
-    }
-
-    // get all developer
-    @RequestMapping(value = "all", method = RequestMethod.GET)
-    public ResponseEntity<List<Developer>> findAllDeveloper() {
-
-        List<Developer> developers = developerService.findAllDeveloper();
-
-        if(developers == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<List<Developer>>(developers, HttpStatus.OK);
-    }
-
-
-    // geting developer by id
-    @RequestMapping(value = "{developerId}", method = RequestMethod.GET)
+    @GetMapping(value = "/{developerId}")
     public ResponseEntity<?> findDeveloperById(@PathVariable("developerId") int developerId) {
-
-        Developer developer;
-
         try {
-            developer = developerService.findDeveloperById(developerId);
+            return ResponseEntity.ok(developerService.findDeveloperById(developerId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        catch (DataAccessException e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        if (developer == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<Developer>(developer, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> findAllDeveloper() {
+        return ResponseEntity.ok(developerService.findAllDeveloper()); // if findAllDeveloper return an empty list of developers this is not an error
+    }
 
-    //this method delete developer by id
-    @RequestMapping(value = "{developerId}/delete", method = RequestMethod.POST)
-    public ResponseEntity<?> deleteDeveloper(@PathVariable(value = "developerId") int id) {
-
-        return developerService.deleteDeveloper(id);
+    @PostMapping(value = "/create")
+    public ResponseEntity<?> createDeveloper(@RequestBody Developer developer) {
+        developerService.createDeveloper(developer);
+        return ResponseEntity.ok().build();
     }
 
     // update developer
-    @RequestMapping(value = "{developerId}/edit", method = RequestMethod.POST)
-    public ResponseEntity<?> updateDeveloper(@PathVariable(value = "developerId") int developerId,@RequestBody Developer developer) {
-        return developerService.editDeveloper(developerId,developer);
+    @PutMapping(value = "/edit")
+    public ResponseEntity<?> updateDeveloper(@RequestBody Developer developer) {
+        try {
+            developerService.editDeveloper(developer);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @DeleteMapping(value = "delete/{developerId}")
+    public ResponseEntity<?> deleteDeveloper(@PathVariable(value = "developerId") int id) {
+        try {
+            developerService.deleteDeveloper(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
